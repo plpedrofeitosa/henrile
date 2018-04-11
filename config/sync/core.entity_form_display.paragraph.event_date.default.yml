@@ -1,0 +1,41 @@
+uuid: 24e73273-fbd8-4109-b469-f72d80e35bca
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.event_date.field_event_date
+    - field.field.paragraph.event_date.field_event_end_time
+    - field.field.paragraph.event_date.field_event_start_time
+    - paragraphs.paragraphs_type.event_date
+  module:
+    - datetime
+    - duration_field
+id: paragraph.event_date.default
+targetEntityType: paragraph
+bundle: event_date
+mode: default
+content:
+  field_event_date:
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_event_end_time:
+    weight: 2
+    settings:
+      duration: ''
+    third_party_settings: {  }
+    type: duration_widget
+    region: content
+  field_event_start_time:
+    weight: 1
+    settings:
+      duration: ''
+    third_party_settings: {  }
+    type: duration_widget
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

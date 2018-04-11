@@ -1,0 +1,106 @@
+<?php
+
+/**
+* @file
+* Contains form_alter_hook.module.
+*/
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+* Implements hook_help().
+*/
+function form_alter_hook_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the form_alter_hook module.
+    case 'help.page.form_alter_hook':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Module for altering forms') . '</p>';
+      return $output;
+
+      default:
+    }
+  }
+
+  use Drupal\Core\Form\FormStateInterface;
+
+  /**
+  * Implements hook_form_alter() on behalf of form_alter_hook.module.
+  */
+  function form_alter_hook_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+    if ($form_id == 'node_event_form' || $form_id === 'node_event_edit_form') {
+      //hide remove button from date entry
+      $form['field_registration_date']['widget']['0']['top']['links']['remove_button']['#access'] = FALSE;
+
+      //use function test_validate for custom validation
+      $form['#validate'][] = 'test_validate';
+      array_unshift($form['actions']['submit']['#submit'], 'submit_event_form');
+
+    }
+  }
+
+  function submit_event_form(&$form, FormStateInterface $form_state){
+    if($form_state->getValue('field_entry_type')[0]['value'] != 'register'){
+      $form_state->unsetValue('field_registration_date');
+    }
+  }
+
+  function test_validate(&$form, FormStateInterface $form_state){
+
+    if($form_state->getTriggeringElement()['#id'] == 'edit-submit'){
+
+      if($form_state->getValue('field_entry_type')[0]['value'] === 'register'){
+        $first_rform_element = 'field_registration_date][0][subform][field_registration_first_date][0';
+        $second_rform_element = 'field_registration_date][0][subform][field_registration_last_date][0';
+
+        //get values for registration first and last date
+        $fregdate = $form_state->getValue('field_registration_date')[0]['subform'];
+        $start = $fregdate['field_registration_first_date'][0]['value'];
+        $end = $fregdate['field_registration_last_date'][0]['value'];
+
+        //get fields for error display
+        if($start->format('U') < time()){
+          $form_state->setErrorByName($first_rform_element, t('Registration start date must be greater than current date'));
+        }
+        if($start->format('U') > $end->format('U')){
+          $form_state->setErrorByName($first_rform_element, t('Registration start date must be smaller than end date'));
+          $form_state->setErrorByName($second_rform_element, t('Registration end date must be greater than start date'));
+        }
+      }
+
+      $events = $form_state->getValue('field_event_date');
+      $delta = 0;
+
+      while (!empty($events[$delta])) {
+        $edatefields = $form_state->getValue('field_event_date')[$delta]['subform'];
+        $edatestartfield = 'field_event_date]['.$delta.'][subform][field_event_start_time';
+        $edateendfield = 'field_event_date]['.$delta.'][subform][field_event_end_time';
+        $estart = $edatefields['field_event_start_time'][0]['value'];
+        $eend = $edatefields['field_event_end_time'][0]['value'];
+
+        if($estart['hour'] < 0 || $estart['hour'] > 24){
+          $form_state->setErrorByName($edatestartfield, t('Event start time hour value must be between 0 and 24'));
+        }
+        if($estart['minute'] < 0 || $estart['minute'] > 59){
+          $form_state->setErrorByName($edatestartfield, t('Event start time minute value must be between 0 and 59'));
+        }
+        if($eend['hour'] < 0 || $eend['hour'] > 24){
+          $form_state->setErrorByName($edateendfield, t('Event end time hour value must be between 0 and 24'));
+        }
+        if($eend['minute'] < 0 || $eend['minute'] > 59){
+          $form_state->setErrorByName($edateendfield, t('Event end time minute value must be between 0 and 59'));
+        }
+        if($estart['hour'] > $eend['hour']){
+          $form_state->setErrorByName($edateendfield, t('Event end time can not be earlier than start time'));
+        }
+        if($estart['hour'] == $eend['hour']){
+          if($estart['minute'] > $eend['minute']){
+            $form_state->setErrorByName($edateendfield, t('Event end time can not be earlier than start time'));
+          }
+        }
+        $delta++;
+      }
+    }
+  }

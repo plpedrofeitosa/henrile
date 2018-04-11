@@ -1,0 +1,21 @@
+uuid: f64a2064-12de-4456-8805-b238368a5ecc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_registration_confirmation_
+    - paragraphs.paragraphs_type.registration_period
+  module:
+    - text
+id: paragraph.registration_period.field_registration_confirmation_
+field_name: field_registration_confirmation_
+entity_type: paragraph
+bundle: registration_period
+label: 'Registration Confirmation Email Text'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

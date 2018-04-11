@@ -1,0 +1,37 @@
+uuid: b225826b-83b1-4b28-9ed1-366f23222407
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_link
+    - node.type.event
+    - paragraphs.paragraphs_type.link
+  module:
+    - entity_reference_revisions
+id: node.event.field_link
+field_name: field_link
+entity_type: node
+bundle: event
+label: Link
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      link: link
+    target_bundles_drag_drop:
+      event_date:
+        weight: 4
+        enabled: false
+      link:
+        enabled: true
+        weight: 5
+      registration_period:
+        weight: 6
+        enabled: false
+field_type: entity_reference_revisions

@@ -1,0 +1,28 @@
+uuid: 3a194a79-ee95-4037-ba8b-088e9af993de
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_event_start_time
+    - paragraphs.paragraphs_type.event_date
+  module:
+    - duration_field
+id: paragraph.event_date.field_event_start_time
+field_name: field_event_start_time
+entity_type: paragraph
+bundle: event_date
+label: 'Event Start Time'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  granularity:
+    hour: true
+    minute: true
+    year: false
+    month: false
+    day: false
+    second: false
+field_type: duration
